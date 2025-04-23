@@ -72,7 +72,7 @@ public class BallController : MonoBehaviour, ICustomUpdate
 
         if (!initialized)
         {
-            bricks = FindObjectsOfType<Brick>();
+            bricks = bricks = Object.FindObjectsByType<Brick>(FindObjectsSortMode.None);
             initialized = true;
         }
 
@@ -88,7 +88,7 @@ public class BallController : MonoBehaviour, ICustomUpdate
     {
         foreach (var brick in bricks)
         {
-            if (brick == null) continue;
+            if (brick == null || !brick.gameObject.activeInHierarchy) continue;
 
             Vector3 brickPos = brick.Position;
             Vector3 brickSize = brick.Size;
@@ -101,13 +101,13 @@ public class BallController : MonoBehaviour, ICustomUpdate
                 ballPos.y < brickPos.y + halfSize.y)
             {
                 velocity.y *= -1;
-                brick.DestroyBrick();
+                brick.DeactivateBrick();
                 break;
             }
         }
     }
 
-    void LaunchBall()
+    public void LaunchBall()
     {
         Vector2 dir = new Vector2(Random.Range(-1f, 1f), 1).normalized;
         velocity = new Vector3(dir.x, dir.y, 0f) * speed;

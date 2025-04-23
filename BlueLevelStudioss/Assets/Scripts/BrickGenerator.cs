@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class BrickGenerator : MonoBehaviour
 {
-    public GameObject brickPrefab;
+    public BrickPool pool;
     public int rows = 3;
     public int columns = 5;
     public float spacing = 0.1f;
 
-    void Start()
+    public void GenerateBricks()
     {
         Vector3 startPos = transform.position;
 
@@ -18,7 +18,7 @@ public class BrickGenerator : MonoBehaviour
             for (int x = 0; x < columns; x++)
             {
                 Vector3 pos = startPos + new Vector3(x * (1 + spacing), y * (0.5f + spacing), 0f);
-                Instantiate(brickPrefab, pos, Quaternion.identity, transform);
+                pool.GetBrick(pos);
             }
         }
     }
