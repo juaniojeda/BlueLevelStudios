@@ -10,6 +10,8 @@ public class BallController : MonoBehaviour, ICustomUpdate
     [SerializeField] private float rightLimit = 8f;
     [SerializeField] private float topLimit = 4.5f;
     [SerializeField] private float bottomLimit = -4f;
+    [SerializeField] public bool isMainBall = true;
+    private Collider myCollider;
 
     private Vector3 velocity;
     private bool isLaunched = false;
@@ -21,6 +23,7 @@ public class BallController : MonoBehaviour, ICustomUpdate
 
     private void Awake()
     {
+        myCollider = GetComponent<Collider>();
         _transform = transform;
 
         if (UpdateManager.Instance != null)
@@ -55,20 +58,25 @@ public class BallController : MonoBehaviour, ICustomUpdate
 
     public void CustomUpdate(float deltaTime)
     {
+        if (!gameObject.activeInHierarchy) return;
         _transform.position += velocity * deltaTime;
         CheckWallCollisions();
         CheckPaddleCollision();
         if (!isLaunched)
         {
-            // Seguir a la paleta
-            _transform.position = paddle.position + new Vector3(0f, 0.5f, 0f);
-
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (isMainBall)
             {
-                LaunchBall();
+                _transform.position = paddle.position + new Vector3(0f, 0.5f, 0f);
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    LaunchBall();
+                }
             }
+
             return;
         }
+
 
         if (!initialized)
         {
@@ -118,28 +126,61 @@ public class BallController : MonoBehaviour, ICustomUpdate
     {
         Vector3 pos = _transform.position;
 
-        // Rebote contra paredes horizontales
-        if (pos.x <= leftLimit || pos.x >= rightLimit)
+        // Rebote contra bordes izquierdo y derecho
+        if (pos.x <= leftLimit)
         {
-            velocity.x *= -1;
-            pos.x = Mathf.Clamp(pos.x, leftLimit, rightLimit);
+            pos.x = leftLimit;
+            velocity.x = Mathf.Abs(velocity.x);
+        }
+        else if (pos.x >= rightLimit)
+        {
+            pos.x = rightLimit;
+            velocity.x = -Mathf.Abs(velocity.x);
         }
 
-        // Rebote contra techo
+        // Rebote contra el techo
         if (pos.y >= topLimit)
         {
-            velocity.y *= -1;
-            pos.y = Mathf.Clamp(pos.y, -999f, topLimit); // solo limite superior
+            pos.y = topLimit;
+            velocity.y = -Mathf.Abs(velocity.y);
         }
 
-        // Si se cae por debajo
+        // Fondo
         if (pos.y <= bottomLimit)
         {
-            isLaunched = false;
+            if (isMainBall)
+            {
+                isLaunched = false;
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+            return;
         }
 
         _transform.position = pos;
     }
+    private void OnEnable()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.Register(this);
+
+        if (myCollider != null)
+            myCollider.enabled = true;
+
+        isLaunched = false;
+        velocity = Vector3.zero;
+    }
+    private void OnDisable()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.Unregister(this);
+
+        if (myCollider != null)
+            myCollider.enabled = false;
+    }
+
 
     private void OnDestroy()
     {

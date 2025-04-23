@@ -38,9 +38,11 @@ public class UpdateManager : MonoBehaviour
     {
         float deltaTime = Time.deltaTime;
 
-        foreach (var updatable in updatables)
+        for (int i = 0; i < updatables.Count; i++)
         {
-            updatable.CustomUpdate(deltaTime);
+            // null-check por seguridad si fue desregistrado
+            if (updatables[i] != null)
+                updatables[i].CustomUpdate(deltaTime);
         }
     }
 }

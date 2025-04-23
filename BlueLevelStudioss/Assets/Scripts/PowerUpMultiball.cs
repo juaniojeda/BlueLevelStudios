@@ -7,6 +7,7 @@ public class PowerUpMultiball : MonoBehaviour, ICustomUpdate
     public float fallSpeed = 2f;
     public Transform paddle;
     public GameObject ballPrefab;
+    public BallPool ballPool;
 
     private Transform _transform;
 
@@ -42,12 +43,12 @@ public class PowerUpMultiball : MonoBehaviour, ICustomUpdate
 
     void ActivatePowerUp()
     {
-        // Instanciar 2 pelotas nuevas
         for (int i = 0; i < 2; i++)
         {
-            GameObject newBall = Instantiate(ballPrefab, paddle.position + Vector3.up * 0.6f, Quaternion.identity);
+            GameObject newBall = ballPool.GetBall(paddle.position + Vector3.up * 0.6f, paddle);
             BallController bc = newBall.GetComponent<BallController>();
-            bc.LaunchBall(); // Lanza automáticamente
+            bc.isMainBall = false;
+            bc.LaunchBall();
         }
 
         Destroy(gameObject); // Eliminar power-up

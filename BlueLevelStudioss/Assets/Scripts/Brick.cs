@@ -15,7 +15,7 @@ public class Brick : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        if (Random.value < 0.2f)
+        if (Random.value < 0.1f)
         {
             GameObject powerUp = Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
             PowerUpMultiball pu = powerUp.GetComponent<PowerUpMultiball>();
