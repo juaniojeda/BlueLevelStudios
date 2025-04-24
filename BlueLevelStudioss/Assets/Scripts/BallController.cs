@@ -35,11 +35,10 @@ public class BallController : MonoBehaviour, ICustomUpdate
 
     void CheckPaddleCollision()
     {
-        // AABB simple
         Vector3 ballPos = _transform.position;
         Vector3 paddlePos = paddle.position;
 
-        float paddleWidth = 4.0f; // ajustá esto según tu modelo
+        float paddleWidth = 4.0f;
         float paddleHeight = 1.0f;
 
         if (ballPos.x > paddlePos.x - paddleWidth / 2 &&
@@ -47,14 +46,15 @@ public class BallController : MonoBehaviour, ICustomUpdate
             ballPos.y > paddlePos.y - paddleHeight / 2 &&
             ballPos.y < paddlePos.y + paddleHeight / 2)
         {
-            // Rebote: cambiar dirección
-            velocity.y = Mathf.Abs(velocity.y);
+            // Calculamos nueva direcci?n
+            float offset = (ballPos.x - paddlePos.x) / (paddleWidth / 2f); // -1 a 1
+            offset = Mathf.Clamp(offset, -1f, 1f); // por si acaso
 
-            // Efecto de rebote lateral según dónde pegó
-            float offset = ballPos.x - paddlePos.x;
-            velocity.x += offset * 2f; // más offset, más rebote lateral
+            Vector2 newDir = new Vector2(offset, 1).normalized;
+            velocity = new Vector3(newDir.x, newDir.y, 0f) * speed;
         }
     }
+
 
     public void CustomUpdate(float deltaTime)
     {
