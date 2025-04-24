@@ -7,17 +7,17 @@ public class WinMenu : MonoBehaviour
 {
     void OnGUI()
     {
-        if (GUI.Button(new Rect(100, 300, 200, 50), "VOLVER A JUGAR"))
+        if (GUI.Button(new Rect(300, 600, 400, 100), "VOLVER A JUGAR"))
         {
             Debug.Log("Cargando GameScene...");
             SceneManager.LoadScene("GameScene");
         }
-        if (GUI.Button(new Rect(100, 100, 200, 50), "MENU"))
+        if (GUI.Button(new Rect(1200, 600, 400, 100), "MENU"))
         {
             Debug.Log("Cargando MainMenu PAPU...");
             SceneManager.LoadScene("MainMenu");
         }
-        if (GUI.Button(new Rect(100, 200, 200, 50), "SALIR"))
+        if (GUI.Button(new Rect(900, 900, 400, 100), "SALIR"))
         {
             Debug.Log("Saliendo...");
             Application.Quit();

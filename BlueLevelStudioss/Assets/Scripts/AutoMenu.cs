@@ -7,13 +7,13 @@ public class AutoMenu : MonoBehaviour
 {
     void OnGUI()
     {
-        if (GUI.Button(new Rect(100, 100, 200, 50), "JUGAR"))
+        if (GUI.Button(new Rect(300, 600, 400, 100), "JUGAR"))
         {
             Debug.Log("Cargando GameScene...");
             SceneManager.LoadScene("GameScene");
         }
 
-        if (GUI.Button(new Rect(100, 200, 200, 50), "SALIR"))
+        if (GUI.Button(new Rect(1200, 600, 400, 100), "SALIR"))
         {
             Debug.Log("Saliendo...");
             Application.Quit();

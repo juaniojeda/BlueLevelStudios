@@ -1,15 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-public class UITimerDisplay : MonoBehaviour
+public class UITimerDisplay : MonoBehaviour, ICustomUpdate
 {
     public TextMeshProUGUI timerText;
     public GameStateManager gameStateManager;
 
-    private void Update()
+    private void Awake()
+    {
+        UpdateManager.Instance.Register(this);
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.Unregister(this);
+    }
+
+    public void CustomUpdate(float deltaTime)
     {
         if (gameStateManager == null) return;
 
@@ -20,4 +30,5 @@ public class UITimerDisplay : MonoBehaviour
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 }
+
 
