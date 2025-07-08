@@ -1,62 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using YourGame.Utilities;
 
-public class PowerUpMultiball : MonoBehaviour, ICustomUpdate
+public class PowerUpMultiball : ICustomUpdate, IDisposable
 {
-    public float fallSpeed = 2f;
-    public Transform paddle;
-    public GameObject ballPrefab;
-    public BallPool ballPool;
+    readonly Transform _transform;
+    readonly Transform _paddle;
+    readonly float _fallSpeed;
 
-    private Transform _transform;
-
-    private void Awake()
+    public PowerUpMultiball(Transform transform, Transform paddle, float fallSpeed)
     {
         _transform = transform;
-        UpdateManager.Instance.Register(this);
+        _paddle = paddle;
+        _fallSpeed = fallSpeed;
+        GameManager.Instance.Register(this);
     }
 
     public void CustomUpdate(float deltaTime)
     {
-        _transform.position += Vector3.down * fallSpeed * deltaTime;
+        if (_transform == null) { Dispose(); return; }
 
-        CheckCollisionWithPaddle();
-    }
+        // Caída vertical
+        _transform.position += Vector3.down * _fallSpeed * deltaTime;
 
-    void CheckCollisionWithPaddle()
-    {
-        Vector3 pos = _transform.position;
-        Vector3 paddlePos = paddle.position;
+        // Detección AABB vs. círculo contra la paleta
+        Vector2 pu = _transform.position;
+        Vector2 p = _paddle.position;
+        const float w = 4f, h = 0.5f;
 
-        float paddleWidth = 2.5f;
-        float paddleHeight = 0.5f;
-
-        if (pos.x > paddlePos.x - paddleWidth / 2 &&
-            pos.x < paddlePos.x + paddleWidth / 2 &&
-            pos.y > paddlePos.y - paddleHeight / 2 &&
-            pos.y < paddlePos.y + paddleHeight / 2)
+        if (pu.x >= p.x - w / 2f && pu.x <= p.x + w / 2f &&
+            pu.y >= p.y - h / 2f && pu.y <= p.y + h / 2f)
         {
-            ActivatePowerUp();
+            SpawnMultiball();
         }
     }
 
-    void ActivatePowerUp()
+    private void SpawnMultiball()
     {
-        for (int i = 0; i < 2; i++)
+        const int count = 2;
+        const float spreadAngle = 45f;  // abanico de ±22.5°
+        Vector3 basePos = _paddle.position + Vector3.up * 0.6f;
+
+        for (int i = 0; i < count; i++)
         {
-            GameObject newBall = ballPool.GetBall(paddle.position + Vector3.up * 0.6f, paddle);
-            BallController bc = newBall.GetComponent<BallController>();
-            bc.isMainBall = false;
-            bc.LaunchBall();
+            // Calcula ángulo equidistante: -spread/2  … +spread/2
+            float angleDeg = -spreadAngle / 2f + spreadAngle * (i / (count - 1f));
+            float angleRad = angleDeg * Mathf.Deg2Rad;
+            Vector3 dir = new Vector3(Mathf.Sin(angleRad), Mathf.Cos(angleRad), 0f);
+
+            // Lanza la bola con dirección en abanico
+            GameManager.Instance.SpawnExtraBall(basePos, dir);
         }
 
-        Destroy(gameObject); // Eliminar power-up
+        Dispose();
     }
 
-    private void OnDestroy()
+    public void Dispose()
     {
-        if (UpdateManager.Instance != null)
-            UpdateManager.Instance.Unregister(this);
+        GameManager.Instance.Unregister(this);
+        if (_transform != null)
+            GameObject.Destroy(_transform.gameObject);
     }
 }

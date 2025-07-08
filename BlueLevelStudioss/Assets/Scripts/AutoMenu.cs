@@ -12,7 +12,11 @@ public class AutoMenu : MonoBehaviour
             Debug.Log("Cargando GameScene...");
             SceneManager.LoadScene("GameScene");
         }
-
+        if (GUI.Button(new Rect(750, 600, 400, 100), "MENU"))
+        {
+            Debug.Log("Cargando SoundMenu...");
+            SceneManager.LoadScene("SoundMenu");
+        }
         if (GUI.Button(new Rect(1200, 600, 400, 100), "SALIR"))
         {
             Debug.Log("Saliendo...");

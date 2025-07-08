@@ -1,19 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BrickPool : MonoBehaviour
+public class BrickPool
 {
-    public GameObject brickPrefab;
-    public int poolSize = 30;
+    private GameObject brickPrefab;
+    private int poolSize;
+    private List<GameObject> pool;
 
-    private List<GameObject> pool = new List<GameObject>();
-
-    void Awake()
+    public BrickPool(GameObject prefab, int initialSize)
     {
+        brickPrefab = prefab;
+        poolSize = initialSize;
+        pool = new List<GameObject>();
+
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject brick = Instantiate(brickPrefab);
+            GameObject brick = Object.Instantiate(brickPrefab);
             brick.SetActive(false);
             pool.Add(brick);
         }
@@ -31,9 +33,14 @@ public class BrickPool : MonoBehaviour
             }
         }
 
-        // Si no hay ladrillos disponibles, opcionalmente expandís el pool:
-        GameObject newBrick = Instantiate(brickPrefab, position, Quaternion.identity);
+        GameObject newBrick = Object.Instantiate(brickPrefab, position, Quaternion.identity);
         pool.Add(newBrick);
         return newBrick;
+    }
+
+    public void ReturnAllBricks()
+    {
+        foreach (var brick in pool)
+            brick.SetActive(false);
     }
 }

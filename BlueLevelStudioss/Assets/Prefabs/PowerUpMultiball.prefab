@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 9210259963918450433}
   - component: {fileID: 7728163514814273653}
   - component: {fileID: 2185200128318157644}
-  - component: {fileID: 7166589912242629026}
   m_Layer: 0
   m_Name: PowerUpMultiball
   m_TagString: Untagged
@@ -110,18 +109,3 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7166589912242629026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61733857004164798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13d3072c1c17e4941becd8104881f610, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fallSpeed: 2
-  paddle: {fileID: 0}
-  ballPrefab: {fileID: 0}
